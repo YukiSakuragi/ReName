@@ -1,0 +1,16 @@
+顧客: Customer
+）: 
+備考: Note
+（: 
+?プロジェクト: Project
+自由記述: Free
+プロジェクトマネージャー: Pm
+終了: End
+業種: JobType
+開始: Start
+種別: Type
+分類: Class
+名: Nm
+ＩＤ: Id
+プロジェクトリーダー: Pl
+日: Date
