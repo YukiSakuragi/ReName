@@ -1,15 +1,20 @@
 import java.io.*;
 import java.util.*; // HashMap を使う際にimport
+import java.util.Scanner;
 
 public class TIS20140227 {
 	String data_file;
 	String out_file;
+	final int doc_max = 16; //最大文書数
+	Document[] doc; // 文書情報を格納するクラスの配列
 
 	// コンストラクタ
 	TIS20140227(String dfile) {
 		data_file = dfile;
 		out_file = "term_frequency.txt";
+		doc = new Document[this.doc_max];
 	}
+	// コンストラクタ
 	
 	//辞書をHashに格納するメソッド
 	void readDic(HashMap<String, String> hm) {
@@ -17,11 +22,12 @@ public class TIS20140227 {
 		{
 			BufferedReader br = new BufferedReader(
 										new InputStreamReader(
-											new FileInputStream("C:/Users/seta/Desktop/配布物/資料/dictionary.csv"), "UTF-8"));
+											new FileInputStream("C:/Users/seta/Desktop/配布物/資料/dic.csv"), "UTF-8"));
 
 			String line;
 			while( (line = br.readLine() ) != null ) {
 			    line = line.replaceAll("\"","");
+			    System.out.println(line);
 				String[] data = line.split(","); //データを分割
 				int data_num = data.length;
 				
@@ -52,7 +58,6 @@ public class TIS20140227 {
 										new InputStreamReader(
 											new FileInputStream("C:/Users/seta/Desktop/配布物/資料/"+infile), "UTF-8"));
 
-			System.out.println("*");
 			String line;
 			while( (line = br.readLine() ) != null ) {
 
@@ -73,8 +78,50 @@ public class TIS20140227 {
 
 				    index = target.indexOf("\"");
 				    target = target.substring(0,index);
-					
-				    System.out.println(target);
+					target = target.replaceAll(" ", "");
+					target = target.replaceAll("\"", "");
+				    
+				    Set keys = hm.keySet();
+				    for( Iterator itr = keys.iterator(); itr.hasNext(); ) {
+						String exp = (String)itr.next();
+						exp = exp.replaceAll(" ", "");
+						exp = exp.replaceAll("\"", "");
+						
+						String value = hm.get(exp);
+						
+						//if(target.contains(exp))
+						if(target.contains(exp))
+						{
+						    target = target.replaceAll(exp,value);
+						}			
+					}
+				    int LargeAlfaCount = 0;
+				    StringBuilder sb = new StringBuilder();
+				    //文字列にアンダーバーを加える
+				    for(int i=0 ; i < target.length();i++)
+				    {
+				    	//文字が英大文字であったら
+				    	if(Character.isUpperCase(target.charAt(i)))
+				    	{
+				    		if(LargeAlfaCount > 0){
+				    			sb.append( "_" + target.charAt(i));
+				    		}
+				    		else
+				    		{
+				    			sb.append(target.charAt(i));
+				    		}
+				    		LargeAlfaCount++;
+				    	}
+				    	else
+				    	{
+			    			sb.append(target.charAt(i));
+				    	}
+				    			
+				    }
+				    
+				    String new_target = new String(sb);
+				    new_target = new_target.toUpperCase();
+				    System.out.println(new_target);
 				}
 				//変更しない場合はそのまま出力する
 				else
@@ -105,8 +152,54 @@ public class TIS20140227 {
 
 	public static void main(String[] args) {
 		TIS20140227 tis = new TIS20140227(args[0]);
-
 		tis.kadai(tis.data_file, tis.out_file);
 	}
 
 } //class HashMapSample3 end
+
+//辞書を表すクラス
+class Document implements Comparable<Document> {
+	private String term;	// 文書名
+	private int term_len;	// 文書ベクトルの大きさ
+
+	// コンストラクタ
+	public Document(String term, int term_len) {
+		this.term = term;
+		this.term_len = term_len;
+	}
+
+	// 単語を返すメソッド
+	public String getTerm() {
+		return this.term;
+	}
+
+	// 単語を設定するメソッド
+	public void setTerm(String term) {
+		this.term = term;
+	}
+	// 単語の長さを設定するメソッド
+	public void setLen(int term_len) {
+		this.term_len = term_len;
+	}
+
+	// 単語の長さ返すメソッド
+	public int getLen() {
+		return this.term_len;
+	}
+
+	// ソート用メソッド（スコアの降順でソート）
+	public int compareTo(Document d) {
+		double s1 = this.term_len;
+		double s2 = d.term_len;
+
+		if (s1 == s2) {
+			return 0;
+		} 
+		else if (s1 < s2) {
+			return 1;
+		} 
+		else {
+			return -1;
+		}
+	}
+}
