@@ -1,0 +1,26 @@
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+
+
+public class read {
+	try {
+		BufferedReader br = new BufferedReader(
+				new InputStreamReader(new FileInputStream(
+						"C:/Users/seta/Desktop/配布物/資料/input.edm"), "UTF-8"));
+
+		String line;
+		String new_doc;
+		int term_count = 0;
+
+		while ((line = br.readLine()) != null) {
+			new_doc = new_doc + line;			
+		} // end while
+		System.out.println(new_doc);
+
+	} catch (Exception e) { // ファイル読み込みエラー時の処理
+		System.out.println("I/O error at readFile \n" + e);
+		System.exit(1); // プログラムの終了
+	}
+}
